@@ -19,18 +19,22 @@ function onClick(event) {
   const image =
     target.dataset.source ?? target.closest(".gallery__link").dataset.source;
   const currentItem = galleryItems.find(({ original }) => original === image);
-  const instance = basicLightbox.create(`
+  const instance = basicLightbox.create(
+    `
 	<img class="gallery__image" src="${currentItem.original}" alt="${currentItem.description}"/></a></li>
-`);
+`,
+    {
+      onShow: (instance) => window.addEventListener("keydown", onPresEsc),
+      onClose: (instance) => window.removeEventListener("keydown", onPresEsc),
+    }
+  );
 
-  event.preventDefault();
   instance.show();
-  window.addEventListener("keydown", onPresEsc);
+  event.preventDefault();
 
   function onPresEsc(event) {
     if (event.code === "Escape") {
       instance.close();
-      window.removeEventListener("keydown", onPresEsc);
     }
   }
 }
